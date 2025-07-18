@@ -7,6 +7,4 @@ import lombok.Data;
 public class StopRequest {
     @JsonProperty("stop")
     private String ID;
-    @JsonProperty("type")
-    private int Type;
 }

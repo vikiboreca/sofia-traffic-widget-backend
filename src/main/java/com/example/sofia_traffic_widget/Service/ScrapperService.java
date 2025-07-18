@@ -13,7 +13,7 @@ public class ScrapperService {
         String postUrl = baseUrl + "/bg/trip/getVirtualTable";
         Map<String, String> cookies = GetCookies(postUrl);
         String xToken = GetToken(cookies);
-        String jsonBody = GetBody(request.getID(), request.getType());
+        String jsonBody = GetBody(request.getID());
         //Get Response
         return GetJson(postUrl, xToken, jsonBody, cookies);
     }
@@ -29,8 +29,8 @@ public class ScrapperService {
         if(TOKEN == null) throw new Exception("No XSRF-TOKEN found in cookies");
         return TOKEN.substring(0, TOKEN.indexOf('%'));
     }
-    private String GetBody(String ID, int type){
-        return "{\"stop\":\"" + ID + "\",\"type\":" + type + "}";
+    private String GetBody(String ID){
+        return "{\"stop\":\"" + ID + "\"}";
     }
     private String GetJson(String postUrl, String xToken, String jsonBody, Map<String, String> cookies) throws Exception {
         Connection.Response response =  Jsoup.connect(postUrl)

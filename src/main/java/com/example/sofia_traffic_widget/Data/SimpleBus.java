@@ -20,7 +20,12 @@ public class SimpleBus {
     public SimpleBus(Bus bus) {
         name = bus.getName();
         type = bus.getType();
-        arriveTimes = bus.getDetails().stream().flatMap(k -> bus.getDetails().stream()).map(BusDetails::getTime).sorted().collect(Collectors.toList());
-        lastStop = bus.getRoute_name().substring(bus.getRoute_name().indexOf('-')+2);
+        arriveTimes = bus.getDetails().stream().flatMap(k -> bus.getDetails().stream()).map(BusDetails::getTime).distinct().sorted().collect(Collectors.toList());
+        lastStop = Station_Splitter(bus.getRoute_name());
+    }
+
+    private String Station_Splitter(String route){
+        String[] parts = route.split("\\s-\\s");
+        return parts[parts.length-1];
     }
 }
