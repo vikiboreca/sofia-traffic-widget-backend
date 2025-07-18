@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/scrap")
@@ -22,13 +23,28 @@ public class ScrapperController {
     private MapperService mapperService;
 
     @PostMapping
-    public List<SimpleBus> test(@RequestBody StopRequest request) throws Exception {
+    public List<SimpleBus> GetData(@RequestBody StopRequest request) throws Exception {
         String RawJson = scrapperService.GetRawData(request);
         Map<String, Bus> busMap = mapperService.getBusMap(RawJson);
         List<SimpleBus> busList = new ArrayList<>();
-        for(var bus : busMap.values()) {
-            busList.add(new SimpleBus(bus));
+        for (var bus : busMap.values()) {
+            SimpleBus simpleBus = new SimpleBus(bus);
+            if(!busList.contains(simpleBus)) {
+                busList.add(simpleBus);
+            }
+            else{
+                SimpleBus oldBus = busList.get(busList.indexOf(simpleBus));
+                oldBus.getArriveTimes().addAll(simpleBus.getArriveTimes());
+                oldBus.setArriveTimes(oldBus.getArriveTimes().stream().distinct().collect(Collectors.toList()));
+                oldBus.getArriveTimes().sort(Integer::compareTo);
+            }
         }
         return busList;
+    }
+
+    @PostMapping("/test")
+    public Map<String, Bus> test(@RequestBody StopRequest request) throws Exception {
+        String RawJson = scrapperService.GetRawData(request);
+        return mapperService.getBusMap(RawJson);
     }
 }
