@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,6 +40,17 @@ public class ScrapperController {
                 oldBus.getArriveTimes().sort(Integer::compareTo);
             }
         }
+        busList = busList.stream().sorted(Comparator.comparing(SimpleBus::getType)).toList();
+        busList = busList.stream()
+                .sorted(Comparator.comparingInt(bus -> {
+                    try {
+                        return Integer.parseInt(bus.getName());
+                    } catch (NumberFormatException e) {
+                        return Integer.MAX_VALUE;
+                    }
+                }))
+                .toList();
+
         return busList;
     }
 
