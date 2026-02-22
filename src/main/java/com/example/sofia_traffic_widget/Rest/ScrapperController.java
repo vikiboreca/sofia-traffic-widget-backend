@@ -3,6 +3,7 @@ package com.example.sofia_traffic_widget.Rest;
 import com.example.sofia_traffic_widget.Data.Bus;
 import com.example.sofia_traffic_widget.Data.SimpleBus;
 import com.example.sofia_traffic_widget.Rest.Models.StopRequest;
+import com.example.sofia_traffic_widget.Service.GTFSRTService;
 import com.example.sofia_traffic_widget.Service.MapperService;
 import com.example.sofia_traffic_widget.Service.ScrapperService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class ScrapperController {
     private ScrapperService scrapperService;
     @Autowired
     private MapperService mapperService;
+
+    @Autowired
+    private GTFSRTService gtfsRTService;
 
     @PostMapping
     public List<SimpleBus> GetData(@RequestBody StopRequest request) throws Exception {
@@ -58,5 +62,11 @@ public class ScrapperController {
     public Map<String, Bus> test(@RequestBody StopRequest request) throws Exception {
         String RawJson = scrapperService.GetRawData(request);
         return mapperService.getBusMap(RawJson);
+    }
+    @GetMapping("/new")
+    public String getNewData(){
+        gtfsRTService.getData();
+        return "New Data";
+
     }
 }
